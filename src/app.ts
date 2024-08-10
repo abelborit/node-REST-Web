@@ -1,4 +1,5 @@
 /* el http es el protocolo tradicional que se ha estado usando por muchos años */
+import fs from "fs";
 import http from "http";
 
 /* el http2 es un nuevo protocolo (ya viene el http3). Es un nuevo tipo en donde se puede mandar información y hacer pushes y eso ayuda al navegador web a mantener mejor el cache, más rápido, más eficiente */
@@ -23,12 +24,23 @@ const server = http.createServer((request, response) => {
   // response.write(`<h1>URL: "${request.url}"</h1>`); // sería contenido generado desde el lado del servidor o el SSR - Server Side Rendering
   // response.end();
 
-  const data = { name: "John Doe", age: 30, city: "New York" };
-  response.writeHead(200, { "Content-Type": "application/json" });
-  response.write(JSON.stringify(data));
-  response.end();
+  // const data = { name: "John Doe", age: 30, city: "New York" };
+  // response.writeHead(200, { "Content-Type": "application/json" });
+  // response.write(JSON.stringify(data));
+  // response.end();
   /* también se puede colocar en el end de forma directa y nos ahorramos colocar la línea de código con el write(......) */
   // response.end(JSON.stringify(data));
+
+  if (request.url === "/") {
+    const htmlFile = fs.readFileSync("./public/index.html", "utf-8");
+
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.write(htmlFile);
+    response.end();
+  } else {
+    response.writeHead(404, { "Content-Type": "text/html" });
+    response.end();
+  }
 });
 
 server.listen(8080, () => {
