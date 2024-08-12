@@ -41,7 +41,52 @@ En la Parte II haremos una extensión de este proyecto de Web Server para que ta
 
 ### \* NOTAS:
 
-- ejemplo
+- Generar el SSL para Linux y MAC: `openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt`. Si hay problemas se puede intentar lo siguiente:
+
+  ```
+    Para quienes tengan el mismo error tienen que buscar la ubicación de su oppenssl.cfn y establecerlo en las variables de entorno siendo el nombre OPENSSL_CONF y el valor de la variable **ruta...**openssl.cnf, por ejemplo para mi la ruta es -> C:\Program Files\Git\mingw64\ssl
+  ```
+
+- Generar el SSL para Windows si el openssl existe (porque al instalar git y gitbash ya debería de reconocer) probando en una terminal `openssl`: `openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt`. Si hay problemas se puede hacer lo siguiente:
+
+- Generar el SSL para Windows si el openssl no existe (porque al instalar git y gitbash ya debería de reconocer) probando en una terminal `openssl` y si no entonces hay que configurar las variables y tener el path del openssl:
+
+  - Tener el path del openssl: disco C -> programs file -> Git -> usr -> bin -> archivo openssl -> copiar path hasta ese archivo o ubicación
+
+  - Modificar las variables de nuestra computadora: tecla windows -> buscar env (Edit the system environments variables) -> Opción de Environments Variables... -> Path -> Edit -> Colocar el path sacado anteriormente -> ok -> ok
+
+- Un comentario de un alummno:
+
+  ```
+    Para aquellos con windows y tengan problema al generar el certificado:
+    --------------------------------------------------------------------------
+
+    En mi caso particular, con windows 10, me estaba dando error pese a configurar la variable de entorno en el path.
+    Me estaba dando un error que no encontraba el archivo openssl.cnf en la carpeta donde tenia instalado Postgres (o sea, nada que ver), por algún motivo me estaba tomando dicha ruta, entonces a la linea que pasa fernando " openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt " al final agreguenle el path donde esta el archivo de openssl.cnf , en mi caso estaba en: git\usr\ssl, quedando la sentencia asi:
+    openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -config "C:\Program Files\Git\usr\ssl"
+
+    Con eso ya estaria, pero tambien en mi caso particular al correrlo indistintamente desde git o powerShell me daba un error de lectura por permisos.
+    Por lo tanto con la ayuda de chatGPT la solución fue crear un archivo de configuracion .cnf personalizado en el path donde tengas la carpeta usr\ssl,  para  generar el archivo nuevo abris el archivo openssl.cnf copias el contenido y lo guardas en un nuevo archivo (en mi caso lo llame myConfig.cnf) y luego lo mismo:  openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -config "C:\Program Files\Git\usr\ssl\myConfig.cnf" .
+
+    Luego tuve otro error más en donde no podia encontrar algunas secciones para generar el certificado ( como por ejemplo countryName) , por lo tanto, al archivo myConfig.cnf le agregue esta seccion tal cual me lo brindo chatGPT :
+
+    [ req_distinguished_name ]
+
+    countryName                     = Country Name (2 letter code)
+
+    stateOrProvinceName             = State or Province Name (full name)
+
+    localityName                    = Locality Name (eg, city)
+
+    organizationName                = Organization Name (eg, company)
+
+    commonName                      = Common Name (eg, your name)
+
+    emailAddress                    = Email Address
+
+    Por ultimo, para encontrar los archivos server.key y server.crt en mi caso se encontraban en el path por default que me brindaba powershell ( es decir, el path por defecto cuando abris powershell en la ruta donde se encuentra ) C:\Users\miUsuario
+  ```
+
 - ejemplo
 - ejemplo
 
