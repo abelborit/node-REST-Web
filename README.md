@@ -37,7 +37,8 @@ En la Parte II haremos una extensión de este proyecto de Web Server para que ta
 
 - Paquete `express` usando `npm install express --save` desde `https://expressjs.com/`
   - Sus types `npm i --save-dev @types/express`
-- ejemplo
+- Paquete `dotenv` usando `npm i dotenv` desde `https://www.npmjs.com/package/dotenv` para leer las variables de entorno
+- Paquete `env-var` usando `npm i env-var` desde `https://www.npmjs.com/package/env-var` para hacer validaciones de nuestras variables o qué tipo de dato van a regresar (string, number, etc)
 - ejemplo
 
 ### \* NOTAS:
