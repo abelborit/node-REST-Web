@@ -1,10 +1,11 @@
 /* todo lo que va de express usualmente se coloca en la carpeta de presentation para no afectar la lógica de negocio. Aquí se podría decir que es una dependencia oculta pero en realidad se va a utilizar express en muy pocos archivos y por eso se puede colocar normal en los archivos donde haga falta */
-import express from "express";
+import express, { Router } from "express";
 import path from "path"; // este "path" ya viene nativo en node para trabajar con rutas de archivos y directorios. Aquí se utiliza para generar rutas absolutas
 
 interface ServerOptions {
   port: number;
   public_path: string;
+  routes: Router;
 }
 
 export class Server {
@@ -14,13 +15,15 @@ export class Server {
   /* FORMA 1 */
   private readonly port: number;
   private readonly publicPath: string;
+  private readonly routes: Router;
 
   constructor(serverOptions: ServerOptions) {
-    const { port, public_path = "public" } = serverOptions;
+    const { port, public_path = "public", routes } = serverOptions;
 
     /* la propiedades readonly solo se pueden modificar en el constructor, ya después no se puede */
     this.port = port;
     this.publicPath = public_path;
+    this.routes = routes;
   }
 
   /* FORMA 2 */
@@ -30,11 +33,17 @@ export class Server {
   // ) {}
 
   async start() {
+    /* Middelwares */
     /* Los Middelwares son funciones que se van a ejecutar en todo momento que se pase por una ruta. Los Middlewares son softwares que se sitúan entre un sistema operativo y las aplicaciones que se ejecutan en él. Básicamente, funcionan como una capa de traducción oculta para permitir la comunicación y la administración de datos en aplicaciones distribuidas las cuales estas son una aplicación con distintos componentes que se ejecutan en entornos separados, normalmente en diferentes plataformas conectadas a través de una red. */
 
+    /* Public Folder */
     /* aquí se configura un middleware para servir archivos estáticos desde la carpeta public. Esto significa que cualquier archivo dentro de public puede ser accedido directamente desde el navegador */
     this.app.use(express.static(this.publicPath));
 
+    /* Routes de las API */
+    this.app.use(this.routes);
+
+    /* Servir las demás rutas por ejemplo de una SPA (Single Page Application) */
     /* para aplicaciones que tienen diferentes rutas usando get("*", ......) el asterísco significa cualquier otra petición get que se esté haciendo, aparte ya de la carpeta public anterior. Es como que si está en la carpeta public entonces que lo sirva (porque ahí ya entra react y toma la aplicación y hace todo desde el lado del cliente) y si no está en la carpeta public (serían las demás rutas que no sean el index o root de la aplicación) se pasaría a este get("*", ......) y esto nos sirve como comodín y vamos a interceptar todas las request y vamos a emitir una response */
     /* Esta ruta es un comodín (*), lo que significa que intercepta todas las peticiones GET que no coincidan con ningún otro archivo estático en public. En este caso, se responde con el archivo index.html, que probablemente sea la entrada principal de una aplicación frontend (como React). El path.join se usa para asegurar que la ruta al archivo sea absoluta, lo cual es necesario para que Node.js lo encuentre correctamente */
     this.app.get("*", (request, response) => {
