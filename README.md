@@ -126,7 +126,7 @@ Aquí vamos a extender nuestro Web Server y transformarlo a un Rest Server. Una 
 
 ### \* NOTAS:
 
-- ejemplo
+- HTTP response status codes -> https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 - ejemplo
 - ejemplo
 
