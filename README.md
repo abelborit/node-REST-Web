@@ -39,7 +39,6 @@ En la Parte II haremos una extensión de este proyecto de Web Server para que ta
   - Sus types `npm i --save-dev @types/express`
 - Paquete `dotenv` usando `npm i dotenv` desde `https://www.npmjs.com/package/dotenv` para leer las variables de entorno
 - Paquete `env-var` usando `npm i env-var` desde `https://www.npmjs.com/package/env-var` para hacer validaciones de nuestras variables o qué tipo de dato van a regresar (string, number, etc)
-- ejemplo
 
 ### \* NOTAS:
 
@@ -91,6 +90,44 @@ En la Parte II haremos una extensión de este proyecto de Web Server para que ta
 
 - Los Middelwares son funciones que se van a ejecutar en todo momento que se pase por una ruta. Los Middlewares son softwares que se sitúan entre un sistema operativo y las aplicaciones que se ejecutan en él. Básicamente, funcionan como una capa de traducción oculta para permitir la comunicación y la administración de datos en aplicaciones distribuidas las cuales estas son una aplicación con distintos componentes que se ejecutan en entornos separados, normalmente en diferentes plataformas conectadas a través de una red.
 
+---
+
+## Parte II:
+
+# Temas puntuales de la sección
+
+### ¿Qué veremos en esta sección?
+
+En esta sección, nos enfocaremos en trabajar con un servidor rest y crear nuestra API. La idea es dejar las bases de todo el servidor bien organizado, para después conectar una base de datos en la siguiente sección e implementar la arquitectura a su totalidad.
+
+Aquí vamos a extender nuestro Web Server y transformarlo a un Rest Server. Una de las particularidades de las peticiones rest en un API tradicional es que no tenga estado, sería sin estado por así decirlo, por ejemplo, no se conoce si el endpoint es llamado desde una aplicación movil o una aplicación web o de otro servidor, no se sabe de dónde viene esa petición, aunque técnicamente sí se podría si se colocan tokens de autenticación, pero la sesión es pasiva, es decir, se pueden tener un millón de usuarios todos conectados a la aplicación pero hasta que uno haga una solicitud ahí recién se emite su respuesta. Con eso se puede tener un alto volumen de usuarios pero la sesión es pasiva a diferencia de tener una sesión activa en el servidor haciendo otras configuraciones, pero el fuerte de los restfull api es que es una autenticación pasiva, es decir, cualquier persona puede mandar una petición al servidor y este, en el momento en que se hace la solicitud, recién le response.
+
+- Puntualmente veremos:
+
+  - CRUD
+    - Create
+    - Read
+    - Updtate
+    - Delete
+  - Desplegar Restful server a la web
+  - Configurar las rutas y los controladores
+
+### \* PASOS A REALIZAR:
+
+1. ejemplo
+2. ejemplo
+3. ejemplo
+
+### \* RECURSOS A USAR:
+
+- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
+- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
+- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
+
+### \* NOTAS:
+
+- ejemplo
+- ejemplo
 - ejemplo
 
 ---
