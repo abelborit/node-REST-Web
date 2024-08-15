@@ -88,7 +88,7 @@ En la Parte II haremos una extensión de este proyecto de Web Server para que ta
     Por ultimo, para encontrar los archivos server.key y server.crt en mi caso se encontraban en el path por default que me brindaba powershell ( es decir, el path por defecto cuando abris powershell en la ruta donde se encuentra ) C:\Users\miUsuario
   ```
 
-- Los Middelwares son funciones que se van a ejecutar en todo momento que se pase por una ruta. Los Middlewares son softwares que se sitúan entre un sistema operativo y las aplicaciones que se ejecutan en él. Básicamente, funcionan como una capa de traducción oculta para permitir la comunicación y la administración de datos en aplicaciones distribuidas las cuales estas son una aplicación con distintos componentes que se ejecutan en entornos separados, normalmente en diferentes plataformas conectadas a través de una red.
+- Los Middlewares son funciones que se van a ejecutar en todo momento que se pase por una ruta. Los Middlewares son softwares que se sitúan entre un sistema operativo y las aplicaciones que se ejecutan en él. Básicamente, funcionan como una capa de traducción oculta para permitir la comunicación y la administración de datos en aplicaciones distribuidas las cuales estas son una aplicación con distintos componentes que se ejecutan en entornos separados, normalmente en diferentes plataformas conectadas a través de una red.
 
 ---
 

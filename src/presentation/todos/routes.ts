@@ -13,6 +13,8 @@ export class TodosRoutes {
     router.get("/:id", todosController.getTodoById);
     router.get("/", todosController.getTodos);
 
+    router.post("/createTodo", todosController.createTodo);
+
     /* FORMA 2: aquí se está mandando la función con sus parámetros que es una segunda forma de hacerlo en vez de la de arriba  */
     // router.get("/", (request, response) =>
     //   todosController.getTodos(request, response)

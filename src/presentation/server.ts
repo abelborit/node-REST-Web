@@ -33,8 +33,11 @@ export class Server {
   // ) {}
 
   async start() {
-    /* Middelwares */
-    /* Los Middelwares son funciones que se van a ejecutar en todo momento que se pase por una ruta. Los Middlewares son softwares que se sitúan entre un sistema operativo y las aplicaciones que se ejecutan en él. Básicamente, funcionan como una capa de traducción oculta para permitir la comunicación y la administración de datos en aplicaciones distribuidas las cuales estas son una aplicación con distintos componentes que se ejecutan en entornos separados, normalmente en diferentes plataformas conectadas a través de una red. */
+    /* Middlewares */
+    /* Los Middlewares son funciones que se van a ejecutar en todo momento que se pase por una ruta. Los Middlewares son softwares que se sitúan entre un sistema operativo y las aplicaciones que se ejecutan en él. Básicamente, funcionan como una capa de traducción oculta para permitir la comunicación y la administración de datos en aplicaciones distribuidas las cuales estas son una aplicación con distintos componentes que se ejecutan en entornos separados, normalmente en diferentes plataformas conectadas a través de una red. */
+    /* por defecto hay que decirle a Express cómo se quiere manejar la serialización de las peticiones POST, es decir, hay que decirle a Express cómo va a venir la data del body, que por lo general viene en formato JSON. En Express ya hay un middleware que ya nos sirve para parsear la información que viene en el body y la transforme en un objeto JSON usando express.json(). Entonces cualquier petición pasará por aquí y si tiene un body lo va a serializar a JSON. Si no se coloca esta serialización y se va a postman directamente para probar el envío del body con petición POST, entonces estará vacía la respuesta, que técnicamente es un undefined pero ese undefined no lo mostrará en postman */
+    this.app.use(express.json()); // middleware para el tipo raw para serializarlo a JSON (que es el más común)
+    this.app.use(express.urlencoded({ extended: true })); // middleware para serializarlo para el tipo x-www-form-urlencoded (por ejemplo para Angular con las peticiones por defecto que realiza). Si no se coloca este middleware y si se usa x-www-form-urlencoded, los datos no se envían en el body del request como un objeto JSON, sino que se envían como un conjunto de pares key value, por eso es que se ve el request.body vacío por ejemplo así {}
 
     /* Public Folder */
     /* aquí se configura un middleware para servir archivos estáticos desde la carpeta public. Esto significa que cualquier archivo dentro de public puede ser accedido directamente desde el navegador */

@@ -37,4 +37,39 @@ export class TodosController {
           .status(404)
           .json({ messageError: `Todo with id ${idParam} not found!` });
   };
+
+  public createTodo = (request: Request, response: Response) => {
+    // const body = request.body; // por si la data viene con exactamente lo que se solicita
+    const { text } = request.body; // por si la data viene con propiedades de relleno y se extrae solo lo que se necesita
+
+    /* se pueden colocar más validaciones por ejemplo si hay propiedades innecesarias entonces mandar un error pero ahorita se hará un backend flexible a que si mandan propiedades de relleno entonces solo tomará las propiedades que se necesita */
+    if (!text)
+      return response
+        .status(400)
+        .json({ messageError: "text property is required" });
+
+    const newTodo = {
+      /* colocarlo para que se sume + 1 no sería lo recomendado porque si dos usuarios crean al mismo tiempo entonces pueden haber inconsistencias en la base de datos */
+      id: todos.length + 1,
+      text,
+      createdAt: null,
+    };
+
+    /* ejemplos de body para colocar en el postman */
+    /* DATA CORRECTA */
+    // {
+    //   "text": "Todo created"
+    // }
+
+    /* DATA CORRECTA PERO CON RELLENO */
+    // {
+    //   "text": "Todo created",
+    //   "propertie": "Propertie",
+    //   "propertie2": "Propertie 2"
+    // }
+
+    todos.push(newTodo);
+
+    return response.status(200).json(newTodo);
+  };
 }
