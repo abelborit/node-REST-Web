@@ -72,4 +72,50 @@ export class TodosController {
 
     return response.status(200).json(newTodo);
   };
+
+  public updateTodo = (request: Request, response: Response) => {
+    /* se le coloca el + para convertir el string que me da los parámetros de la url usando el request.params.id a un número para poder hacer la validación con el id que tiene mi lista de todos y tener el mismo tipo number y no string (de los parámetros) y number (de la lista de todos) */
+    const idParam = +request.params.id; // si el id es valido como un 1, o 100 entonces está bien y sería status 200 pero si se coloca algo inválido como /12jsjs entonces tendría que ser un status 404
+    // console.log({ idParam });
+    if (isNaN(idParam))
+      return response
+        .status(400)
+        .json({ messageError: "id param is not a number (NaN)" });
+
+    const todoById = todos.find((todoElement) => todoElement.id === idParam);
+    if (!todoById)
+      return response
+        .status(404)
+        .json({ messageError: `Todo with id ${idParam} not found` });
+
+    const { text, createdAt } = request.body;
+
+    /* ejemplos de body para colocar en el postman */
+    // {
+    //   "text": "Todo updated"
+    // }
+
+    // {
+    //   "text": "Todo updated",
+    //   "createdAt": "null"
+    // }
+
+    // {
+    //   "text": "Todo updated",
+    //   "createdAt": null
+    // }
+
+    // {
+    //   "text": "Todo updated",
+    //   "createdAt": "2023-10-21"
+    // }
+
+    /* aquí se estaría actualizando el todo pero por referencia, porque se tiene la misma referencia del objeto, es decir, el mismo espacio en memoria, solo que se está cambiando una propiedad. Esta forma no sería la más adecuada, no se debería mutar la data directamente y eso en base de datos se hará más facil ver el problema, ahora como está en memoria y vuelve todo a la normalidad cuando se termina y se levanta el servicio entonces no hay problema */
+    todoById.text = text || todoById.text; // si viene el texto entonces se actualiza y si no entonces que mantenga su texto
+    createdAt === "null" || createdAt === null // si viene null en el body......
+      ? (todoById.createdAt = null) // entonces colocar el valor de null que sería como borrar la fecha
+      : (todoById.createdAt = new Date(createdAt || todoById.createdAt)); // si no, entonces mandar una fecha la cual sería si viene fecha en el body entonces colocarla y si no entonces colocar la fecha que ya tenía inicialmente
+
+    return response.status(200).json(todoById);
+  };
 }
