@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-const todos = [
+let todos = [
   { id: 1, text: "Todo 1", createdAt: new Date() },
   { id: 2, text: "Todo 2", createdAt: null },
   { id: 3, text: "Todo 3", createdAt: new Date() },
@@ -117,5 +117,39 @@ export class TodosController {
       : (todoById.createdAt = new Date(createdAt || todoById.createdAt)); // si no, entonces mandar una fecha la cual sería si viene fecha en el body entonces colocarla y si no entonces colocar la fecha que ya tenía inicialmente
 
     return response.status(200).json(todoById);
+  };
+
+  /* para el delete no necesariamente se tendría que eliminar de la base de datos, se puede simplemente colocarlo como inactivo y dejarlo en la base de datos pero que ya no pueda ser solicitado y que se conserve para poder mantener un historial o algo similar */
+  public deleteTodo = (request: Request, response: Response) => {
+    /* se le coloca el + para convertir el string que me da los parámetros de la url usando el request.params.id a un número para poder hacer la validación con el id que tiene mi lista de todos y tener el mismo tipo number y no string (de los parámetros) y number (de la lista de todos) */
+    const idParam = +request.params.id; // si el id es valido como un 1, o 100 entonces está bien y sería status 200 pero si se coloca algo inválido como /12jsjs entonces tendría que ser un status 404
+    // console.log({ idParam });
+    if (isNaN(idParam))
+      return response
+        .status(400)
+        .json({ messageError: "id param is not a number (NaN)" });
+
+    /* se puede usar filter cuando son pocos elementos ya que este lee todo el arreglo y si son bastantes elementos puede afectar el rendimiento */
+    /* findIndex encuentra el índice del primer elemento que coincide con la condición. Se usa en un arreglo con bastantes elementos para mejorar el rendimiento. Si existe retornar el índice y si no existe retorna un -1 */
+    const todoIndexById = todos.findIndex(
+      (todoElement) => todoElement.id === idParam
+    );
+    // console.log(todoIndexById);
+
+    const todoToDelete = todos[todoIndexById];
+
+    if (todoIndexById === -1)
+      return response
+        .status(404)
+        .json({ messageError: `Todo with id ${idParam} not found` });
+
+    /* slice no muta el arreglo original y se puede trabajar de forma directa ya que retorna un nuevo arreglo */
+    /* slice(inicio índice, fin índice) */
+    todos = [
+      ...todos.slice(0, todoIndexById),
+      ...todos.slice(todoIndexById + 1),
+    ];
+
+    return response.status(200).json(todoToDelete);
   };
 }
