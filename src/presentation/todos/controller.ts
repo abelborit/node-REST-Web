@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../../data/postgres";
+import { CreateTodoDTO } from "../../domain/DTOs/todos";
 
 // let todos = [
 //   { id: 1, text: "Todo 1", createdAt: new Date() },
@@ -47,18 +48,21 @@ export class TodosController {
 
   public createTodo = async (request: Request, response: Response) => {
     // const body = request.body; // por si la data viene con exactamente lo que se solicita
-    const { text } = request.body; // por si la data viene con propiedades de relleno y se extrae solo lo que se necesita
+    // const { text } = request.body; // por si la data viene con propiedades de relleno y se extrae solo lo que se necesita
 
     /* se pueden colocar más validaciones por ejemplo si hay propiedades innecesarias entonces mandar un error pero ahorita se hará un backend flexible a que si mandan propiedades de relleno entonces solo tomará las propiedades que se necesita */
-    if (!text)
-      return response
-        .status(400)
-        .json({ messageError: "text property is required" });
+    // if (!text)
+    //   return response
+    //     .status(400)
+    //     .json({ messageError: "text property is required" });
+
+    /* usando el DTO creado */
+    const [error, createTodoDTO] = CreateTodoDTO.create(request.body);
+
+    if (error) return response.status(400).json({ error: error });
 
     const newTodo = await prisma.todoModel.create({
-      data: {
-        text: text,
-      },
+      data: createTodoDTO!, // aquí se coloca createTodoDTO! porque eso ya sabamos que tenemos el dato que necesitamos, y también ya se hizo la validación si había algún error arriba. Se puede regresar una instancia también en el create-todo.dto.ts para evitar colocar ese createTodoDTO! pero no sería conveniente porque se crearía una instancia incompleta porque precisamente había un error, entonces por eso lo dejamos así como está ahora
     });
 
     // const newTodo = {

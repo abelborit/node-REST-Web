@@ -225,8 +225,6 @@ Veremos cómo cargar información semilla, porque cuando se está empezando un n
 ### \* NOTAS:
 
 - Para poder revisar cómo están construídas otras API como por ejemplo esta [TMDB](https://developer.themoviedb.org/reference/account-details) para conocer un poco más y tener otros ejemplos de cómo podemos ir implementando nuestras APIs.
-- ejemplo
-- ejemplo
 
 - Se puede obviar el usar `Docker Desktop` pero es más facil usar y montar una base de datos MongoDB ahí, es más facil probar, deshacer, borrar la base de datos, volver a levantar y tener todo el ambiente de desarrollo sin que salga de nuestra computadora. Al usar docker en nuestro ambiente de desarrollo, nos va a poder permitir tener nuestra base de datos rápidamente en nuestro equipo sin pasar por todo el proceso de instalación manual. Alguans referencias:
 
@@ -263,5 +261,23 @@ Veremos cómo cargar información semilla, porque cuando se está empezando un n
     - `db.nombre_coleccion.insert(opciones_a_colocar)` -> insertar un dato en nuestra base de datos
     - `show collections` -> listar las colecciones creadas
     - `db.nombre_coleccion.find()` -> listar lo que tengo dentro de la colección
+
+- Para agregar validaciones a lo que se recibe en el body de la solicitud, se puede usar [express-validator](https://express-validator.github.io/docs/) el cual es un paquete muy popular y este nos ayuda a hacer validaciones en la parte de nuestros controladores el cual se coloca como un middleware que se ejecutará antes de la request y response, es decir, antes de que se ejecute el callback se va a ejecutar el middleware, por ejemplo:
+
+  ```javascript
+  const express = require("express");
+  const app = express();
+
+  app.use(express.json());
+  app.get("/hello", (req, res) => {
+    res.send(`Hello, ${req.query.person}!`);
+  });
+
+  app.listen(3000);
+  ```
+
+  - También, primero sería bueno conocer un poco de los DTO para hacer algo similar a lo anterior [Data Transfer Object DTO Definition and Usage](https://www.okta.com/identity-101/dto/) el cual sería un objeto hecho o creado para transmitir información.
+
+- ejemplo
 
 ---
