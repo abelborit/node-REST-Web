@@ -12,3 +12,11 @@ datasource db {
   provider = "postgresql"
   url      = env("POSTGRES_URL")
 }
+
+// en la parte de Prisma tenemos que definir cómo queremos trabajar con nuestros modelos y en general tenemos que definir el esquema de Prisma, que se puede hacer como normalmente se haría que sería hacerlo en la base de datos y luego se coloca en la terminal `npx prima db pull` y eso traería toda la visión del desarrollador que se tiene en la base de datos o la otra forma es hacerlo de forma manual y directa en el archivo (como lo haremos esta vez)
+
+model TodoModel {
+  id            Int             @id @default(autoincrement())
+  text          String          @db.VarChar
+  createdAt     DateTime?       @db.Timestamp()
+}
