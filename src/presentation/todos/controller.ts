@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../../data/postgres";
-import { CreateTodoDTO } from "../../domain/DTOs/todos";
+import { CreateTodoDTO, UpdateTodoDTO } from "../../domain/DTOs/todos";
 
 // let todos = [
 //   { id: 1, text: "Todo 1", createdAt: new Date() },
@@ -62,7 +62,7 @@ export class TodosController {
     if (error) return response.status(400).json({ error: error });
 
     const newTodo = await prisma.todoModel.create({
-      data: createTodoDTO!, // aquí se coloca createTodoDTO! porque eso ya sabamos que tenemos el dato que necesitamos, y también ya se hizo la validación si había algún error arriba. Se puede regresar una instancia también en el create-todo.dto.ts para evitar colocar ese createTodoDTO! pero no sería conveniente porque se crearía una instancia incompleta porque precisamente había un error, entonces por eso lo dejamos así como está ahora
+      data: createTodoDTO!, // aquí se coloca createTodoDTO! porque eso ya sabamos que tenemos el dato que necesitamos, y también ya se hizo la validación si había algún error arriba. Se puede regresar una instancia también en el create-todo.dto.ts para evitar colocar ese createTodoDTO! pero no sería conveniente porque se crearía una instancia incompleta porque precisamente habría un error, entonces por eso lo dejamos así como está ahora
     });
 
     // const newTodo = {
@@ -94,13 +94,21 @@ export class TodosController {
     /* se le coloca el + para convertir el string que me da los parámetros de la url usando el request.params.id a un número para poder hacer la validación con el id que tiene mi lista de todos y tener el mismo tipo number y no string (de los parámetros) y number (de la lista de todos) */
     const idParam = +request.params.id; // si el id es valido como un 1, o 100 entonces está bien y sería status 200 pero si se coloca algo inválido como /12jsjs entonces tendría que ser un status 404
     // console.log({ idParam });
-    if (isNaN(idParam))
-      return response
-        .status(400)
-        .json({ messageError: "id param is not a number (NaN)" });
+    // if (isNaN(idParam))
+    //   return response
+    //     .status(400)
+    //     .json({ messageError: "id param is not a number (NaN)" });
+
+    /* usando el DTO creado */
+    const [error, updateTodoDTO] = UpdateTodoDTO.create({
+      ...request.body,
+      id: idParam,
+    });
+
+    if (error) return response.status(400).json({ error: error });
 
     const todoById = await prisma.todoModel.findFirst({
-      where: { id: idParam },
+      where: { id: idParam }, // aquí también se podría extraer del updateTodoDTO
     });
 
     // const todoById = todos.find((todoElement) => todoElement.id === idParam);
@@ -110,7 +118,7 @@ export class TodosController {
         .status(404)
         .json({ messageError: `Todo with id ${idParam} not found` });
 
-    const { text, createdAt } = request.body;
+    // const { text, createdAt } = request.body;
 
     /* ejemplos de body para colocar en el postman */
     // {
@@ -134,10 +142,11 @@ export class TodosController {
 
     const updatedTodo = await prisma.todoModel.update({
       where: { id: idParam },
-      data: {
-        text: text,
-        createdAt: createdAt ? new Date(createdAt) : null, // aquí todavía se tendrían que hacer validaciones si es un formato fecha y demás, pero por ahora solo se dejará simple y luego usaremos lo que se conoce como DTO (Data Transfer Objects)
-      },
+      data: updateTodoDTO!.values, // aquí se coloca updateTodoDTO!.values porque eso ya sabamos que tenemos el dato que necesitamos, y también ya se hizo la validación si había algún error arriba. Se puede regresar una instancia también en el update-todo.dto.ts para evitar colocar ese updateTodoDTO!.values pero no sería conveniente porque se crearía una instancia incompleta porque precisamente habría un error, entonces por eso lo dejamos así como está ahora
+      // data: {
+      //   text: text,
+      //   createdAt: createdAt ? new Date(createdAt) : null, // aquí todavía se tendrían que hacer validaciones si es un formato fecha y demás, pero por ahora solo se dejará simple y luego usaremos lo que se conoce como DTO (Data Transfer Objects) que es lo que está arriba
+      // },
     });
 
     /* aquí se estaría actualizando el todo pero por referencia, porque se tiene la misma referencia del objeto, es decir, el mismo espacio en memoria, solo que se está cambiando una propiedad. Esta forma no sería la más adecuada, no se debería mutar la data directamente y eso en base de datos se hará más facil ver el problema, ahora como está en memoria y vuelve todo a la normalidad cuando se termina y se levanta el servicio entonces no hay problema */
