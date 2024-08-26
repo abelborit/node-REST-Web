@@ -1,11 +1,16 @@
 import { Router } from "express";
 import { TodosController } from "./controller";
+import { TodoDatasourceImplementation } from "../../infrastructure/datasource/todo.datasource.implementation";
+import { TodoRepositoryImplementation } from "../../infrastructure/repositories/todo.repository.implementation";
 
 export class TodosRoutes {
   /* aquí se utiliza static functions porque como no se hará inyección de dependencias entonces no sería necesario instsanciar la clase AppRoutes y solo se coloca directo. También se están usando el get function para tener otra forma de realizar esta función, se podría realizar sin ese get (son solo diferentes formas de hacerlo) */
   static get routes(): Router {
     const router = Router();
-    const todosController = new TodosController();
+
+    const todoDatasource = new TodoDatasourceImplementation();
+    const todoRepository = new TodoRepositoryImplementation(todoDatasource);
+    const todosController = new TodosController(todoRepository);
 
     /* Routes de las API de los todos */
     /* FORMA 1: aquí solo se está mandando la referencia a la función porque lo que se manda y lo que se recibe es el mismo orden y lo mismo */
