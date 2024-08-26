@@ -311,7 +311,24 @@ En la sección del testing, haremos pruebas de integración con el servidor, lo 
 ### \* NOTAS:
 
 - Buenas prácticas para Express: https://expressjs.com/en/advanced/best-practice-performance.html
-- ejemplo
-- ejemplo
+- Diferencia entre el Datasource y el Repositorio
+
+  - En este caso lucen igual pero tienen responsabilidades diferentes...
+
+    - El objetivo de la clase abstracta de un data source, es definir cómo llegaremos a esa fuente de datos
+
+    - El objetivo de la clase abstracta de un repositorio, es consumir ese data source.
+
+  - ¿Por qué son similares?
+
+    Porque queremos utilizar el repositorio para llegar a los métodos de las implementaciones del data source, pero usamos una implementación del repositorio porque así podemos cambiar el origen de datos fácilmente.
+
+    Piensa, qué pasa si en desarrollo, tu tienes una base de datos local, digamos SQLite, haces una clase que extienda del datasource abstracto, y ahí haces todo lo que necesites.
+
+    Luego al día de mañana, ya no usarás SQLite, usarás ISAR o un API a un backend, entonces creas otra clase que extienda de ese datasource abstracto.
+
+    Si lo haces así, y llamas el data source desde tu repositorio, puedes cambiar de origen de datos sin tener que tocar una sola línea de código de tus implementaciones.
+
+  Recuerda que el repositorio llama un data source, y puedes cambiarlo fácilmente. aquí aplicamos el principio de inversión de dependencias -> https://en.wikipedia.org/wiki/Dependency_inversion_principle
 
 ---
