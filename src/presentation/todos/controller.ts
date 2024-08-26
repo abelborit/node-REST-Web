@@ -1,7 +1,14 @@
 import { Request, Response } from "express";
-import { prisma } from "../../data/postgres";
+// import { prisma } from "../../data/postgres";
 import { CreateTodoDTO, UpdateTodoDTO } from "../../domain/DTOs/todos";
 import { TodoRepository } from "../../domain/repositories/todo.repository";
+import {
+  CreateTodoUseCase,
+  DeleteTodoUseCase,
+  GetAllTodosUseCase,
+  GetTodoByIdUseCase,
+  UpdateTodoUseCase,
+} from "../../domain/use-cases/todo";
 
 // let todos = [
 //   { id: 1, text: "Todo 1", createdAt: new Date() },
@@ -9,6 +16,7 @@ import { TodoRepository } from "../../domain/repositories/todo.repository";
 //   { id: 3, text: "Todo 3", createdAt: new Date() },
 // ];
 
+/* una de las buenas prácticas de Express es que no se usen métodos asíncronos en los controllers y ahora haremos uso de los use-cases también. Pero la duda es "¿Cómo hacemos para trabajar con tareas asíncronas entonces?" */
 export class TodosController {
   /* aquí no tendrá métodos estáticos porque usualmente en nuestros controladores vamos a querer hacer las inyecciones de dependencias. Aquí podríamos inyectar un repositorio y que nuestras rutas usen ese repositorio para realizar el trabajo que nosotros queremos hacer o mejor aún, podemos inyectar un repositorio para poder implementar y usarlo mediante casos de uso */
 
@@ -17,23 +25,29 @@ export class TodosController {
     private readonly todoRepository: TodoRepository
   ) {}
 
-  public getTodos = async (request: Request, response: Response) => {
+  public getTodos = (request: Request, response: Response) => {
     /* en los casos donde usemos la base de datos por así decirlo, es decir, usar el prisma.alguna_propiedad.... en vez de colocarlo directamente aquí, se podría crear un servicio aparte como por ejemplo como se hace en Angular o Nest, es decir, sea crea una clase con el nombre por ejemplo TodoService y ahí se tiene centralizado todo lo que se necesita de la base de datos por ejemplo. La idea es que solo tengamos un lugar dónde poder acceder a toda la información para que si esa información cambia entonces solo se tenga un lugar en dónde hacer el cambio y no hacer un cambio en cascado (primero en un archivo, luego en otro archivo y así hasta terminar de realizar el cambio) y si se cambia el servicio entonces solo se cambia en ese lugar y lo demás tendría que seguir igual sin afectarse */
     // const todos = await prisma.todoModel.findMany();
 
     /* aquí usaremos directamente el repositorio pero aún no los casos de uso que eso lo veremos más adelante y eso ya sería ver hasta dónde queremos llegar con la arquitectura limpia */
-    const todos = await this.todoRepository.getAll(); // aquí ya se tendría la instancia de nuestra clase TodoEntity, no son objetos como como lo regresa Prisma
+    // const todos = await this.todoRepository.getAll(); // aquí ya se tendría la instancia de nuestra clase TodoEntity, no son objetos como como lo regresa Prisma
     // console.log({ todos });
 
     /* este return es opcional aunque es bastante común que se retorne para que después ya no haga algún código adicional */
-    todos
-      ? response.status(200).json(todos)
-      : response
-          .status(404)
-          .json({ messageError: `Todos list don't have any todos!` });
+    // todos
+    //   ? response.status(200).json(todos)
+    //   : response
+    //       .status(404)
+    //       .json({ messageError: `Todos list don't have any todos!` });
+
+    /* usar el use-case */
+    new GetAllTodosUseCase(this.todoRepository)
+      .execute()
+      .then((todos) => response.status(200).json(todos))
+      .catch((error) => response.status(404).json({ error }));
   };
 
-  public getTodoById = async (request: Request, response: Response) => {
+  public getTodoById = (request: Request, response: Response) => {
     /* se le coloca el + para convertir el string que me da los parámetros de la url usando el request.params.id a un número para poder hacer la validación con el id que tiene mi lista de todos y tener el mismo tipo number y no string (de los parámetros) y number (de la lista de todos) */
     const idParam = +request.params.id; // si el id es valido como un 1, o 100 entonces está bien y sería status 200 pero si se coloca algo inválido como /12jsjs entonces tendría que ser un status 404
     // console.log({ idParam });
@@ -47,16 +61,16 @@ export class TodosController {
     // });
 
     /* aquí usaremos directamente el repositorio pero aún no los casos de uso que eso lo veremos más adelante y eso ya sería ver hasta dónde queremos llegar con la arquitectura limpia */
-    try {
-      const todoById = await this.todoRepository.findById(idParam);
+    // try {
+    //   const todoById = await this.todoRepository.findById(idParam);
 
-      /* si hay código adicional fuera del try catch entonces se sacará ese return y solo el código, es decir, colocar solo response.status(200).json(todoById); para que abajo al último recién se coloque el return para decir que ya no se hará nada más */
-      return response.status(200).json(todoById);
-    } catch (error) {
-      // console.log(error);
+    //   /* si hay código adicional fuera del try catch entonces se sacará ese return y solo el código, es decir, colocar solo response.status(200).json(todoById); para que abajo al último recién se coloque el return para decir que ya no se hará nada más */
+    //   return response.status(200).json(todoById);
+    // } catch (error) {
+    //   // console.log(error);
 
-      return response.status(404).json({ error });
-    }
+    //   return response.status(404).json({ error });
+    // }
 
     // const todoById = todos.find((todoElement) => todoElement.id === idParam);
 
@@ -65,9 +79,15 @@ export class TodosController {
     //   : response
     //       .status(404)
     //       .json({ messageError: `Todo with id ${idParam} not found!` });
+
+    /* usar el use-case */
+    new GetTodoByIdUseCase(this.todoRepository)
+      .execute(idParam)
+      .then((todo) => response.status(200).json(todo))
+      .catch((error) => response.status(404).json({ error }));
   };
 
-  public createTodo = async (request: Request, response: Response) => {
+  public createTodo = (request: Request, response: Response) => {
     // const body = request.body; // por si la data viene con exactamente lo que se solicita
     // const { text } = request.body; // por si la data viene con propiedades de relleno y se extrae solo lo que se necesita
 
@@ -108,12 +128,17 @@ export class TodosController {
     // todos.push(newTodo);
 
     /* aquí usaremos directamente el repositorio pero aún no los casos de uso que eso lo veremos más adelante y eso ya sería ver hasta dónde queremos llegar con la arquitectura limpia */
-    const newTodo = this.todoRepository.create(createTodoDTO!); // se coloca con el ! porque ya se sabe que SÍ se tiene el createTodoDTO
+    // const newTodo = this.todoRepository.create(createTodoDTO!); // se coloca con el ! porque ya se sabe que SÍ se tiene el createTodoDTO
+    // return response.status(200).json(newTodo);
 
-    return response.status(200).json(newTodo);
+    /* usar el use-case */
+    new CreateTodoUseCase(this.todoRepository)
+      .execute(createTodoDTO!) // se coloca el ! porque ya sabemos que viene en el createTodoDTO y si no viene entonces ya se está manejando arriba la validación
+      .then((todo) => response.status(200).json(todo))
+      .catch((error) => response.status(400).json({ error }));
   };
 
-  public updateTodo = async (request: Request, response: Response) => {
+  public updateTodo = (request: Request, response: Response) => {
     /* se le coloca el + para convertir el string que me da los parámetros de la url usando el request.params.id a un número para poder hacer la validación con el id que tiene mi lista de todos y tener el mismo tipo number y no string (de los parámetros) y number (de la lista de todos) */
     const idParam = +request.params.id; // si el id es valido como un 1, o 100 entonces está bien y sería status 200 pero si se coloca algo inválido como /12jsjs entonces tendría que ser un status 404
     // console.log({ idParam });
@@ -179,14 +204,20 @@ export class TodosController {
     //   : (todoById.createdAt = new Date(createdAt || todoById.createdAt)); // si no, entonces mandar una fecha la cual sería si viene fecha en el body entonces colocarla y si no entonces colocar la fecha que ya tenía inicialmente
 
     /* aquí usaremos directamente el repositorio pero aún no los casos de uso que eso lo veremos más adelante y eso ya sería ver hasta dónde queremos llegar con la arquitectura limpia */
-    const updatedTodo = await this.todoRepository.updateById(updateTodoDTO!); // se coloca el ! porque ya se sabe que se tiene el todo actualizado
+    // const updatedTodo = await this.todoRepository.updateById(updateTodoDTO!); // se coloca el ! porque ya se sabe que se tiene el todo actualizado
 
     /* la información que estamos regresando en updatedTodo luce muy similar a lo que nosotros estamos guardando en base de datos pero aquí deberíamos regresar la instancia personalizada de nuestra clase que es usada para controlar nuestro endpoint, por así decirlo, no debería ser algo que viene de Prisma, pero esas migraciones ya lo haremos cuando se aplique la Clean Architecture, que es lo que ya se está aplicando ahora con el todoRepository */
-    return response.status(200).json(updatedTodo);
+    // return response.status(200).json(updatedTodo);
+
+    /* usar el use-case */
+    new UpdateTodoUseCase(this.todoRepository)
+      .execute(updateTodoDTO!) // se coloca el ! porque ya sabemos que viene en el updateTodoDTO y si no viene entonces ya se está manejando arriba la validación
+      .then((todo) => response.status(200).json(todo))
+      .catch((error) => response.status(400).json({ error }));
   };
 
   /* para el delete no necesariamente se tendría que eliminar de la base de datos, se puede simplemente colocarlo como inactivo y dejarlo en la base de datos pero que ya no pueda ser solicitado y que se conserve para poder mantener un historial o algo similar */
-  public deleteTodo = async (request: Request, response: Response) => {
+  public deleteTodo = (request: Request, response: Response) => {
     /* se le coloca el + para convertir el string que me da los parámetros de la url usando el request.params.id a un número para poder hacer la validación con el id que tiene mi lista de todos y tener el mismo tipo number y no string (de los parámetros) y number (de la lista de todos) */
     const idParam = +request.params.id; // si el id es valido como un 1, o 100 entonces está bien y sería status 200 pero si se coloca algo inválido como /12jsjs entonces tendría que ser un status 404
     // console.log({ idParam });
@@ -210,16 +241,16 @@ export class TodosController {
     // });
 
     /* aquí usaremos directamente el repositorio pero aún no los casos de uso que eso lo veremos más adelante y eso ya sería ver hasta dónde queremos llegar con la arquitectura limpia */
-    const deletedTodo = this.todoRepository.deleteById(idParam);
+    // const deletedTodo = this.todoRepository.deleteById(idParam);
 
     /* si por alguna razón la operación de eliminación falla, aunque el todo exista, puede haber un problema con la base de datos o algún otro error inesperado, por eso se valida dos veces, es una buena práctica manejar los errores de esta manera para asegurarnos de que todo funcione correctamente y siempre mandarle una respuesta al usuario */
-    deletedTodo
-      ? response.status(200).json(deletedTodo)
-      : response
-          .status(403) // 400 - 403 - 404 - 500 u otro código de error
-          .json({
-            messageError: `We have some problems to delete todo with id ${idParam}`,
-          });
+    // deletedTodo
+    //   ? response.status(200).json(deletedTodo)
+    //   : response
+    //       .status(403) // 400 - 403 - 404 - 500 u otro código de error
+    //       .json({
+    //         messageError: `We have some problems to delete todo with id ${idParam}`,
+    //       });
 
     // /* se puede usar filter cuando son pocos elementos ya que este lee todo el arreglo y si son bastantes elementos puede afectar el rendimiento */
     // /* findIndex encuentra el índice del primer elemento que coincide con la condición. Se usa en un arreglo con bastantes elementos para mejorar el rendimiento. Si existe retornar el índice y si no existe retorna un -1 */
@@ -243,5 +274,11 @@ export class TodosController {
     // ];
 
     // return response.status(200).json({ todoById, deletedTodo });
+
+    /* usar el use-case */
+    new DeleteTodoUseCase(this.todoRepository)
+      .execute(idParam)
+      .then((todo) => response.status(200).json(todo))
+      .catch((error) => response.status(404).json({ error }));
   };
 }
