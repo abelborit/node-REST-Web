@@ -302,13 +302,15 @@ En la sección del testing, haremos pruebas de integración con el servidor, lo 
 
 ### \* RECURSOS A USAR:
 
-- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
-- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
+- Paquete `compression` usando `npm i compression` desde `https://expressjs.com/en/advanced/best-practice-performance.html#use-gzip-compression`
+
+  - Para los types usando `npm i --save-dev @types/compression`
+
 - Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
 
 ### \* NOTAS:
 
-- ejemplo
+- Buenas prácticas para Express: https://expressjs.com/en/advanced/best-practice-performance.html
 - ejemplo
 - ejemplo
 
