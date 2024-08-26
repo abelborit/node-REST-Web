@@ -281,3 +281,35 @@ Veremos cómo cargar información semilla, porque cuando se está empezando un n
 - ejemplo
 
 ---
+
+## Parte IV:
+
+# Temas puntuales de la sección
+
+### ¿Qué veremos en esta sección?
+
+En esta sección, nos enfocaremos a trabajar mediante el patrón repositorio y la arquitectura limpia con casos de uso.
+
+Es una sección recomendada, ya que aunque es importante, no quiere decir que es la única forma de trabajar, podemos usar el repositorio, controladores o inclusive los casos de uso directamente, pero si queremos implementarla a su totalidad, aquí se tiene una guía al respecto.
+
+En la sección del testing, haremos pruebas de integración con el servidor, lo que significa que no probaremos los casos de uso, probaremos los servicios Rest directamente.
+
+### \* PASOS A REALIZAR:
+
+1. ejemplo
+2. ejemplo
+3. ejemplo
+
+### \* RECURSOS A USAR:
+
+- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
+- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
+- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
+
+### \* NOTAS:
+
+- ejemplo
+- ejemplo
+- ejemplo
+
+---

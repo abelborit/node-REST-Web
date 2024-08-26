@@ -15,6 +15,8 @@ datasource db {
 
 // en la parte de Prisma tenemos que definir cómo queremos trabajar con nuestros modelos y en general tenemos que definir el esquema de Prisma, que se puede hacer como normalmente se haría que sería hacerlo en la base de datos y luego se coloca en la terminal `npx prima db pull` y eso traería toda la visión del desarrollador que se tiene en la base de datos o la otra forma es hacerlo de forma manual y directa en el archivo (como lo haremos esta vez)
 
+// cuando trabajamos con MongoDB usamos Mongoose y ahí es necesario crear modelos individuales para cada colección, pero cuando trabajamos con PostgreSQL utilizando Prisma, la cosa es un poco diferente, en Prisma, definimos todos los modelos en un solo archivo llamado schema.prisma que se encuentra en la carpeta de Prisma. Esto se hace así porque Prisma genera un cliente basado en este esquema, y cada vez que cambiamos nuestro esquema, tenemos que ejecutar un comando para actualizar el cliente de Prisma. Si a mitad de camino nos damos cuenta de que nos falta un campo, se puede agregar en el modelo en schema.prisma y luego ejecutar el comando para actualizar el cliente de Prisma y aplicar los cambios en la base de datos, así que sí, si se quiere crear varias tablas, se tendrían que definirlas todas en schema.prisma, pero esto es porque estamos usando Prisma, no PostgresSQL
+
 model TodoModel {
   id            Int             @id @default(autoincrement())
   text          String          @db.VarChar
