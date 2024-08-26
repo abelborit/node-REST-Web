@@ -14,6 +14,7 @@ export class TodosController {
   constructor() {}
 
   public getTodos = async (request: Request, response: Response) => {
+    /* en los casos donde usemos la base de datos por así decirlo, es decir, usar el prisma.alguna_propiedad.... en vez de colocarlo directamente aquí, se podría crear un servicio aparte como por ejemplo como se hace en Angular o Nest, es decir, sea crea una clase con el nombre por ejemplo TodoService y ahí se tiene centralizado todo lo que se necesita de la base de datos por ejemplo. La idea es que solo tengamos un lugar dónde poder acceder a toda la información para que si esa información cambia entonces solo se tenga un lugar en dónde hacer el cambio y no hacer un cambio en cascado (primero en un archivo, luego en otro archivo y así hasta terminar de realizar el cambio) y si se cambia el servicio entonces solo se cambia en ese lugar y lo demás tendría que seguir igual sin afectarse */
     const todos = await prisma.todoModel.findMany();
 
     /* este return es opcional aunque es bastante común que se retorne para que después ya no haga algún código adicional */
