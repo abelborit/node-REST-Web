@@ -331,4 +331,14 @@ En la sección del testing, haremos pruebas de integración con el servidor, lo 
 
   Recuerda que el repositorio llama un data source, y puedes cambiarlo fácilmente. aquí aplicamos el principio de inversión de dependencias -> https://en.wikipedia.org/wiki/Dependency_inversion_principle
 
+- Conceptos de API REST - RESTFUL - REST
+
+  - _REST_ (Representational State Transfer) es un estilo arquitectónico para diseñar interfaces de red. Define un conjunto de principios y restricciones que guían la forma en que se diseñan y comunican las aplicaciones web. REST no es un protocolo en sí mismo, sino más bien un conjunto de pautas para crear APIs interoperables y escalables.
+
+  - _RESTful_, por otro lado, se refiere a la implementación de los principios REST en una API. Una API RESTful es aquella que cumple con las restricciones y recomendaciones establecidas por la arquitectura REST. En otras palabras, una API RESTful es una API que sigue las "reglas" de REST.
+
+  - _API REST_ (API de Transferencia de Estado Representacional) es una interfaz de programación de aplicaciones (API) que se adhiere a los principios REST. Las API REST permiten a los clientes acceder y manipular recursos en un servidor a través de solicitudes HTTP.
+
+  - Para terminar, el trabajo realizado se centró en la construcción de una API RESTful utilizando los principios de Arquitectura Limpia. Esto significa que el API está diseñado para ser modular, escalable y mantenible, con una clara separación de responsabilidades y un enfoque en la testeabilidad y la extensibilidad.
+
 ---
