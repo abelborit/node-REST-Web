@@ -351,7 +351,7 @@ En la sección del testing, haremos pruebas de integración con el servidor, lo 
 
 Esta sección de testing, posiblemente es la más simple de todas, porque realizaremos pruebas de integración sobre nuestro servidor Rest.
 
-La idea es que al llamar un endpoint, obtengamos la información deseada y esperada, si llamamos un método de creación, estamos esperando que se cree el elemento, y realizaremos posteriormente las limpiezas respectivas. También se harán pruebas de integración porque queremos probar que las rutas funcionen, es decir, que "/api/todos/........" (get, post, put, delete) funcionen de la forma esperada
+La idea es que al llamar un endpoint, obtengamos la información deseada y esperada, si llamamos un método de creación, estamos esperando que se cree el elemento, y realizaremos posteriormente las limpiezas respectivas. También se harán pruebas de integración porque queremos probar que las rutas funcionen, es decir, que "/api/todos/........" (get, post, put, delete) funcionen de la forma esperada. (Se está colocando la limpieza automática de los mocs, instancias, resultados, etc por parte del `npx jest --init` aunque también se puede hacer de forma manual como en el ejercicio de "node-NOC-app-monitoring-system")
 
 
 ### \* PASOS A REALIZAR:
