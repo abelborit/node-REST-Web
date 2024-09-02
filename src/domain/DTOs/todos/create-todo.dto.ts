@@ -8,7 +8,8 @@ export class CreateTodoDTO {
     const { text } = props;
 
     /* validaciones de nuestras properties tal cual lo haríamos comúnmente */
-    if (!text) return ["Text property is required", undefined];
+    if (!text || text.length === 0)
+      return ["Text property is required", undefined];
 
     return [undefined, new CreateTodoDTO(text)];
   }

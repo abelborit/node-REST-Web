@@ -46,7 +46,7 @@ describe("Test in routes.ts", () => {
     expect(response.body[0].createdAt).toBeNull();
   });
 
-  test("should return a TODO - api/todos/:id", async () => {
+  test("should return a TODO - /api/todos/:id", async () => {
     const todo = await prisma.todoModel.create({ data: todo1 });
 
     const { body } = await request(testServer.app)
@@ -60,12 +60,46 @@ describe("Test in routes.ts", () => {
     });
   });
 
-  test("should return a 404 Not Found - api/todos/:id", async () => {
+  test("should return a 404 Not Found - /api/todos/:id", async () => {
     const todoId = 999;
     const { body } = await request(testServer.app)
       .get(`/api/todos/${todoId}`)
       .expect(404);
 
     expect(body).toEqual({ error: `Todo with id ${todoId} not found!` });
+  });
+
+  test("should return a new Todo - /api/todos/createTodo", async () => {
+    const { body } = await request(testServer.app)
+      .post("/api/todos/createTodo")
+      .send(todo1)
+      .expect(201); // usualmente cuando se crea un recurso es status 201
+
+    /* veremos que el id cambia bastante pero eso está bien, porque las demás pruebas también impactan la base de datos, es por eso que el id se va incrementando */
+    // console.log(body);
+
+    expect(body).toEqual({
+      id: expect.any(Number),
+      text: todo1.text,
+      createdAt: null,
+    });
+  });
+
+  test("should return an error if text property is not present - /api/todos/createTodo", async () => {
+    const { body } = await request(testServer.app)
+      .post("/api/todos/createTodo")
+      .send({})
+      .expect(400);
+
+    expect(body).toEqual({ error: "Text property is required" });
+  });
+
+  test("should return an error if text property is empty - /api/todos/createTodo", async () => {
+    const { body } = await request(testServer.app)
+      .post("/api/todos")
+      .send({ text: "" })
+      .expect(400);
+
+    expect(body).toEqual({ error: "Text property is required" });
   });
 });

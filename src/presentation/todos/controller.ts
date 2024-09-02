@@ -134,7 +134,7 @@ export class TodosController {
     /* usar el use-case */
     new CreateTodoUseCase(this.todoRepository)
       .execute(createTodoDTO!) // se coloca el ! porque ya sabemos que viene en el createTodoDTO y si no viene entonces ya se está manejando arriba la validación
-      .then((todo) => response.status(200).json(todo))
+      .then((todo) => response.status(201).json(todo)) // usualmente cuando se crea un recurso es status 201
       .catch((error) => response.status(400).json({ error }));
   };
 
