@@ -46,7 +46,7 @@ describe("Test in routes.ts", () => {
     expect(response.body[0].createdAt).toBeNull();
   });
 
-  test("should return a TODO api/todos/:id", async () => {
+  test("should return a TODO - api/todos/:id", async () => {
     const todo = await prisma.todoModel.create({ data: todo1 });
 
     const { body } = await request(testServer.app)
@@ -58,5 +58,14 @@ describe("Test in routes.ts", () => {
       text: todo.text,
       createdAt: todo.createdAt,
     });
+  });
+
+  test("should return a 404 Not Found - api/todos/:id", async () => {
+    const todoId = 999;
+    const { body } = await request(testServer.app)
+      .get(`/api/todos/${todoId}`)
+      .expect(404);
+
+    expect(body).toEqual({ error: `Todo with id ${todoId} not found!` });
   });
 });
