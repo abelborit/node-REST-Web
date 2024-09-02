@@ -342,3 +342,46 @@ En la sección del testing, haremos pruebas de integración con el servidor, lo 
   - Para terminar, el trabajo realizado se centró en la construcción de una API RESTful utilizando los principios de Arquitectura Limpia. Esto significa que el API está diseñado para ser modular, escalable y mantenible, con una clara separación de responsabilidades y un enfoque en la testeabilidad y la extensibilidad.
 
 ---
+
+## Parte V:
+
+# Temas puntuales de la sección
+
+### ¿Qué veremos en esta sección?
+
+Esta sección de testing, posiblemente es la más simple de todas, porque realizaremos pruebas de integración sobre nuestro servidor Rest.
+
+La idea es que al llamar un endpoint, obtengamos la información deseada y esperada, si llamamos un método de creación, estamos esperando que se cree el elemento, y realizaremos posteriormente las limpiezas respectivas. También se harán pruebas de integración porque queremos probar que las rutas funcionen, es decir, que "/api/todos/........" (get, post, put, delete) funcionen de la forma esperada
+
+
+### \* PASOS A REALIZAR:
+
+1. ejemplo
+2. ejemplo
+3. ejemplo
+
+### \* RECURSOS A USAR:
+
+- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
+- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
+- Paquete `nombre_paquete` usando `comando_paquete` desde `url_paquete`
+
+### \* NOTAS:
+
+- Ejecutar las pruebas secuencialmente
+
+  ```
+Como hay varios ficheros de test de prueba separados que levantan el servidor y otros más que acceden a la base de datos de TEST y escriben y consultan, entonces por eso los test iban algunos bien a veces, y a veces no.
+
+El problema venía porque se ejecutaban los test en paralelo, que es la ejecución por defecto de jest, así que cuantos más ficheros de test distintos se tengan, que necesiten levantar el servidor o acceder a la base de datos, más problemas habrán.
+
+Para evitar esto, hay una opción que se coloca al arrancar jest en el package.json para que los test se ejecuten secuencialmente. Esta opción es --runInBand y entonces, ahora se tendrían estos scripts:
+
+    "test": "npm run docker:test && jest --runInBand",
+    "test:watch": "npm run docker:test && jest --watchAll --runInBand",
+  ```
+
+- ejemplo
+- ejemplo
+
+---
