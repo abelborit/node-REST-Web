@@ -2,10 +2,10 @@
 
 import { config } from "dotenv";
 
-/* config para poder configurar las variables de entorno ya que sin estas configuración al momento de querer leer las variables de entorno estará leyendo las del .env y no las que colocaríamos para el test que estárían en .env.test */
+/* config para poder configurar las variables de entorno ya que sin estas configuración al momento de querer leer las variables de entorno estará leyendo las del .env y no las que colocaríamos para el test que estarían en .env.test */
 config({
-
-})
+  path: ".env.test",
+});
 
 /* con lo anterior ya realizado, entonces hay que decirle a Jest que cuando se levante entonces tiene que ejecutar este archivo primero y eso lo hacemos en el archivo jest.config.ts y sería colocar esta configuración en el setupFiles:
 
