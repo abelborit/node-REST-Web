@@ -11,7 +11,11 @@ interface ServerOptions {
 
 export class Server {
   /* inicializar express */
-  private app = express();
+  /* lo cambiamos a public readonly para que al probar en nuestro test nos aparezca también la inicialización de express (la variable app) y no solo los métodos de la clase Server */
+  public readonly app = express();
+
+  /* opcional porque en algún punto en el tiempo no va a tener un valor, porque hasta que se levanta el servidor recién lo tendrá. Tiene de tipo any solo para no hacerlo más complicado, pero se podría buscar el tipo correcto */
+  private serverListener?: any;
 
   /* FORMA 1 */
   private readonly port: number;
@@ -69,8 +73,14 @@ export class Server {
     });
 
     /* colocar a nuestra aplicación a escuchar peticiones. El puerto debe venir por variables de entorno */
-    this.app.listen(this.port, () => {
+    /* para detener el procedimiento y cerrar los listeners que tenemos haremos uso del .close() que se está llamando en la función close() de abajo */
+    this.serverListener = this.app.listen(this.port, () => {
       console.log(`server running on port ${this.port} ✅`);
     });
+  }
+
+  public close() {
+    /* aquí no aparecerá el autocompletado del .close() porque como arriba se puso de tipo any entonces puede ser cualquier valor */
+    this.serverListener?.close();
   }
 }

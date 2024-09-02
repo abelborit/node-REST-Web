@@ -381,7 +381,8 @@ Para evitar esto, hay una opción que se coloca al arrancar jest en el package.j
     "test:watch": "npm run docker:test && jest --watchAll --runInBand",
   ```
 
-- ejemplo
+- Para hacer las pruebas de nuestro server, rutas, request, response, etc, usaremos supertest (https://www.npmjs.com/package/supertest) que ya lo instalamos con Jest para las pruebas pero nos podemos guiar de su documentación para conocer un poco más de cómo se podrían hacer los test en un rest full api endpoint.
+
 - ejemplo
 
 ---
