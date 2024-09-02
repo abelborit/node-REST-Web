@@ -353,7 +353,6 @@ Esta sección de testing, posiblemente es la más simple de todas, porque realiz
 
 La idea es que al llamar un endpoint, obtengamos la información deseada y esperada, si llamamos un método de creación, estamos esperando que se cree el elemento, y realizaremos posteriormente las limpiezas respectivas. También se harán pruebas de integración porque queremos probar que las rutas funcionen, es decir, que "/api/todos/........" (get, post, put, delete) funcionen de la forma esperada. (Se está colocando la limpieza automática de los mocs, instancias, resultados, etc por parte del `npx jest --init` aunque también se puede hacer de forma manual como en el ejercicio de "node-NOC-app-monitoring-system")
 
-
 ### \* PASOS A REALIZAR:
 
 1. ejemplo
@@ -371,15 +370,21 @@ La idea es que al llamar un endpoint, obtengamos la información deseada y esper
 - Ejecutar las pruebas secuencialmente
 
   ```
-Como hay varios ficheros de test de prueba separados que levantan el servidor y otros más que acceden a la base de datos de TEST y escriben y consultan, entonces por eso los test iban algunos bien a veces, y a veces no.
+  Como hay varios ficheros de test de prueba separados que levantan el servidor y otros más que acceden a la base de datos de TEST y escriben y consultan, entonces por eso los test iban algunos bien a veces, y a veces no.
 
-El problema venía porque se ejecutaban los test en paralelo, que es la ejecución por defecto de jest, así que cuantos más ficheros de test distintos se tengan, que necesiten levantar el servidor o acceder a la base de datos, más problemas habrán.
+  El problema venía porque se ejecutaban los test en paralelo, que es la ejecución por defecto de jest, así que cuantos más ficheros de test distintos se tengan, que necesiten levantar el servidor o acceder a la base de datos, más problemas habrán.
 
-Para evitar esto, hay una opción que se coloca al arrancar jest en el package.json para que los test se ejecuten secuencialmente. Esta opción es --runInBand y entonces, ahora se tendrían estos scripts:
+  Para evitar esto, hay una opción que se coloca al arrancar jest en el package.json para que los test se ejecuten secuencialmente. Esta opción es --runInBand y entonces, ahora se tendrían estos scripts:
 
-    "test": "npm run docker:test && jest --runInBand",
-    "test:watch": "npm run docker:test && jest --watchAll --runInBand",
+      "test": "npm run docker:test && jest --runInBand",
+      "test:watch": "npm run docker:test && jest --watchAll --runInBand",
   ```
+
+  - Siguiendo con el comentario anterior "Error cuando hay mas archivos de testing":
+
+    - COMENTARIO: Cuando hago el testing de integración a un solo archivo, por ejemplo routes.test.ts que es el que está probando Fernando Herrera funciona bien, pero si yo creo otro archivo porque quiero probar otros endpoints, por ejemplo auth.routes.test que contendría las pruebas de integración para login y registrar usuario, entonces como son dos archivos, al ejecutar los test el routes.test.ts se ejecuta de manera exitosa, pero cuando llega al auth.routes.test este ya no se ejecuta de manera exitosa, sino que muestra que el puerto ya ha sido utilizado, el puerto del test-server.ts es diferente al puerto que utilizo para ejecutar la aplicación en modo dev, he estado investigando y al parecer el problema es que como los test se ejecutan en paralelo al ejecutar el primer test se levanta el servidor de testing y cuando se quiere ejecutar el otro test no puede porque ya está levantado en el otro test, ¿cómo puedo solucionar ese problema?
+
+    - RESPUESTA: El problema me parece que se da debido a que al ejecutar pruebas en archivos separados, cada archivo intenta iniciar su propio servidor de prueba, lo que puede causar conflictos al intentar utilizar el mismo puerto para ambos servidores. Una solución que se me ocurre a este problema sería asegurarse de que cada archivo de prueba tenga su propio puerto de prueba único para evitar conflictos. Puedes lograr esto configurando dinámicamente el puerto en el que se inicia el servidor de prueba en cada archivo de prueba. Al hacerlo, cada archivo de prueba utilizará un puerto diferente, evitando así conflictos al ejecutar las pruebas en paralelo. También asegúrate de gestionar adecuadamente la limpieza y el cierre de los servidores de prueba al finalizar las pruebas para liberar los recursos correctamente.
 
 - Para hacer las pruebas de nuestro server, rutas, request, response, etc, usaremos supertest (https://www.npmjs.com/package/supertest) que ya lo instalamos con Jest para las pruebas pero nos podemos guiar de su documentación para conocer un poco más de cómo se podrían hacer los test en un rest full api endpoint.
 

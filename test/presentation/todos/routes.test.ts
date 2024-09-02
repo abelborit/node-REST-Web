@@ -1,5 +1,6 @@
 import request from "supertest";
 import { testServer } from "../../test.server";
+import { prisma } from "../../../src/data/postgres";
 
 /* Para hacer las pruebas de nuestro server, rutas, request, response, etc, usaremos supertest (https://www.npmjs.com/package/supertest) que ya lo instalamos con Jest para las pruebas pero nos podemos guiar de su documentación para conocer un poco más de cómo se podrían hacer los test en un rest full api endpoint. */
 describe("Test in routes.ts", () => {
@@ -13,7 +14,18 @@ describe("Test in routes.ts", () => {
     testServer.close();
   });
 
+  beforeEach(async () => {
+    await prisma.todoModel.deleteMany();
+  });
+
+  const todo1 = { text: "Hola Mundo 1" };
+  const todo2 = { text: "Hola Mundo 2" };
+
   test("should return all todos - /api/todos", async () => {
+    await prisma.todoModel.createMany({
+      data: [todo1, todo2],
+    });
+
     /* en el await request(.......) nos pide la aplicación, sería la instancia de nuestro server, sería esa inicialización de express de "private app = express();" y para eso crearemos un servidor de testing el cual será el test-server.ts, también se puede como exportar de alguna forma lo que está en el app.ts */
     /* Al hacerlo de esta forma entonces vamos a hacer las pruebas en nuestro servidor que está corriendo en testServer.app */
     /* si quitamos el async/await y colocamos por ejemplo un 400 en vez del 200, no nos da error en el test, y si colocamos el async/await y colocamos por ejemplo un 400 entonces sí nos da el error del test. Esto sucede porque es asíncrono, entonces en el momento que se hace el request la petición se va a trabajar pero primero finaliza el código síncrono, es decir, sin el async/await se corre la prueba, finaliza y luego recién tenemos la respuesta al código asíncrono pero ya se cerró el test, y si colocamos el async/await entonces espera a que se finalice esa parte del código y recién finaliza el test */
@@ -25,6 +37,12 @@ describe("Test in routes.ts", () => {
 
     // const response = await request(testServer.app).get("/api/todos");
 
-    console.log(response.body);
+    // console.log(response.body);
+
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body.length).toBe(2);
+    expect(response.body[0].text).toBe(todo1.text);
+    expect(response.body[1].text).toBe(todo2.text);
+    expect(response.body[0].completedAt).toBeNull();
   });
 });
