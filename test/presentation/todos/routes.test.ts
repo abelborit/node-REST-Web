@@ -124,7 +124,7 @@ describe("Test in routes.ts", () => {
     const todoId = 999;
     const { body } = await request(testServer.app)
       .put(`/api/todos/${todoId}`)
-      .send({ text: "Hola mundo UPDATE", completedAt: "2023-10-21" })
+      .send({ text: "Hola mundo UPDATE", createdAt: "2023-10-21" })
       .expect(404);
 
     expect(body).toEqual({ error: `Todo with id ${todoId} not found` });
@@ -144,5 +144,28 @@ describe("Test in routes.ts", () => {
       text: todo1.text,
       createdAt: "2023-10-21T00:00:00.000Z",
     });
+  });
+
+  test("should delete a TODO - /api/todos/:id", async () => {
+    const todo = await prisma.todoModel.create({ data: todo1 });
+
+    const { body } = await request(testServer.app)
+      .delete(`/api/todos/${todo.id}`)
+      .expect(200);
+
+    expect(body).toEqual({
+      id: expect.any(Number),
+      text: todo.text,
+      createdAt: null,
+    });
+  });
+
+  test("should return 404 if todo does not exist - /api/todos/:id", async () => {
+    const todoId = 999;
+    const { body } = await request(testServer.app)
+      .delete(`/api/todos/${todoId}`)
+      .expect(404);
+
+    expect(body).toEqual({ error: `Todo with id ${todoId} not found` });
   });
 });
