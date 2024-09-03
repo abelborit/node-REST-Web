@@ -4,6 +4,7 @@ import { prisma } from "../../data/postgres";
 import { TodoDatasource } from "../../domain/datasources/todo.datasource";
 import { CreateTodoDTO, UpdateTodoDTO } from "../../domain/DTOs/todos";
 import { TodoEntity } from "../../domain/entities/todo.entity";
+import { CustomError } from "../../domain/errors/custom.error";
 
 /* toda esta implementación o todo este TodoDatasourceImplementation resume cómo queremos conectarnos a nuestra base de datos de Postgres y si por ejemplo se tiene a Mongo entonces aquí es donde se haría con Mongoose o si se tiene a Prisma entonces se puede conectar a Mongo usando Prisma */
 export class TodoDatasourceImplementation implements TodoDatasource {
@@ -30,7 +31,7 @@ export class TodoDatasourceImplementation implements TodoDatasource {
     });
 
     /* aquí puede ser que se encuentre o no se encuentre y si no se encuentra entonces lanzaría un error */
-    if (!todoById) throw `Todo with id ${id} not found!`;
+    if (!todoById) throw new CustomError(`Todo with id ${id} not found!`, 404);
 
     return TodoEntity.fromObject(todoById);
   }

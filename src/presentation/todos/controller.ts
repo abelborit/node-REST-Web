@@ -9,6 +9,7 @@ import {
   GetTodoByIdUseCase,
   UpdateTodoUseCase,
 } from "../../domain/use-cases/todo";
+import { CustomError } from "../../domain/errors/custom.error";
 
 // let todos = [
 //   { id: 1, text: "Todo 1", createdAt: new Date() },
@@ -24,6 +25,20 @@ export class TodosController {
     /* se coloca el TodoRepository porque se quiere que sea cualquier implementación que cumpla con ese TodoRepository y no se coloca el TodoRepositoryImplementation porque sino sería tajantemente cumplir con esa implementación */
     private readonly todoRepository: TodoRepository
   ) {}
+
+  /* vamos a centralizar las respuestas que sean de error. Se coloca error: unknown porque puede ser un error lanzada por la aplicación o nuestro custom error, entonces lo haremos de tal forma que pueda aceptar cualquier tipo de excepción que se pueda dar. Algo importante a tener en cuenta es que este handleErrorResponse tiene que ser lo último que se pueda ejecutar */
+  private handleErrorResponse = (response: Response, error: unknown) => {
+    /* significa que es una excepción lanzada o controlada por nosotros mismos y que intencionalmente nosotros hicimos para poder controlarlo */
+    if (error instanceof CustomError) {
+      response.status(error.statusCode).json({ error: error.messageError });
+      return; // para que ya no continúe
+    }
+
+    /* si no es un error controlado por nosotros entonces será un 500 porque es un error que no estamos manejando ni controlando. Esto no debería de suceder nunca porque no es un error manejado por nosotros, pero se puede dar por ejemplo que la base de datos no estaba creada, una conversión no fue posible o cosas similares */
+    response
+      .status(500)
+      .json({ error: "Internal Server Error - Check your logs" });
+  };
 
   public getTodos = (request: Request, response: Response) => {
     /* en los casos donde usemos la base de datos por así decirlo, es decir, usar el prisma.alguna_propiedad.... en vez de colocarlo directamente aquí, se podría crear un servicio aparte como por ejemplo como se hace en Angular o Nest, es decir, sea crea una clase con el nombre por ejemplo TodoService y ahí se tiene centralizado todo lo que se necesita de la base de datos por ejemplo. La idea es que solo tengamos un lugar dónde poder acceder a toda la información para que si esa información cambia entonces solo se tenga un lugar en dónde hacer el cambio y no hacer un cambio en cascado (primero en un archivo, luego en otro archivo y así hasta terminar de realizar el cambio) y si se cambia el servicio entonces solo se cambia en ese lugar y lo demás tendría que seguir igual sin afectarse */
@@ -44,7 +59,7 @@ export class TodosController {
     new GetAllTodosUseCase(this.todoRepository)
       .execute()
       .then((todos) => response.status(200).json(todos))
-      .catch((error) => response.status(404).json({ error }));
+      .catch((error) => this.handleErrorResponse(response, error));
   };
 
   public getTodoById = (request: Request, response: Response) => {
@@ -84,7 +99,7 @@ export class TodosController {
     new GetTodoByIdUseCase(this.todoRepository)
       .execute(idParam)
       .then((todo) => response.status(200).json(todo))
-      .catch((error) => response.status(404).json({ error }));
+      .catch((error) => this.handleErrorResponse(response, error));
   };
 
   public createTodo = (request: Request, response: Response) => {
@@ -135,7 +150,7 @@ export class TodosController {
     new CreateTodoUseCase(this.todoRepository)
       .execute(createTodoDTO!) // se coloca el ! porque ya sabemos que viene en el createTodoDTO y si no viene entonces ya se está manejando arriba la validación
       .then((todo) => response.status(201).json(todo)) // usualmente cuando se crea un recurso es status 201
-      .catch((error) => response.status(400).json({ error }));
+      .catch((error) => this.handleErrorResponse(response, error));
   };
 
   public updateTodo = (request: Request, response: Response) => {
@@ -213,7 +228,7 @@ export class TodosController {
     new UpdateTodoUseCase(this.todoRepository)
       .execute(updateTodoDTO!) // se coloca el ! porque ya sabemos que viene en el updateTodoDTO y si no viene entonces ya se está manejando arriba la validación
       .then((todo) => response.status(200).json(todo))
-      .catch((error) => response.status(400).json({ error }));
+      .catch((error) => this.handleErrorResponse(response, error));
   };
 
   /* para el delete no necesariamente se tendría que eliminar de la base de datos, se puede simplemente colocarlo como inactivo y dejarlo en la base de datos pero que ya no pueda ser solicitado y que se conserve para poder mantener un historial o algo similar */
@@ -279,6 +294,6 @@ export class TodosController {
     new DeleteTodoUseCase(this.todoRepository)
       .execute(idParam)
       .then((todo) => response.status(200).json(todo))
-      .catch((error) => response.status(404).json({ error }));
+      .catch((error) => this.handleErrorResponse(response, error));
   };
 }
