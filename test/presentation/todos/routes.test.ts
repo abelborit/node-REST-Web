@@ -47,6 +47,7 @@ describe("Test in routes.ts", () => {
   });
 
   test("should return a TODO - /api/todos/:id", async () => {
+    /* para crear un todo usando la instancia de prisma directamente para tener un registro ya que en el beforeEach todo es borrado */
     const todo = await prisma.todoModel.create({ data: todo1 });
 
     const { body } = await request(testServer.app)
@@ -101,5 +102,47 @@ describe("Test in routes.ts", () => {
       .expect(400);
 
     expect(body).toEqual({ error: "Text property is required" });
+  });
+
+  test("should return an updated TODO - /api/todos/:id", async () => {
+    /* para crear un todo usando la instancia de prisma directamente para tener un registro ya que en el beforeEach todo es borrado */
+    const todo = await prisma.todoModel.create({ data: todo1 });
+
+    const { body } = await request(testServer.app)
+      .put(`/api/todos/${todo.id}`)
+      .send({ text: "Hola mundo UPDATE", createdAt: "2023-10-21" })
+      .expect(200);
+
+    expect(body).toEqual({
+      id: expect.any(Number),
+      text: "Hola mundo UPDATE",
+      createdAt: "2023-10-21T00:00:00.000Z",
+    });
+  });
+
+  test("should return 404 if TODO not found", async () => {
+    const todoId = 999;
+    const { body } = await request(testServer.app)
+      .put(`/api/todos/${todoId}`)
+      .send({ text: "Hola mundo UPDATE", completedAt: "2023-10-21" })
+      .expect(404);
+
+    expect(body).toEqual({ error: `Todo with id ${todoId} not found` });
+  });
+
+  test("should return an updated TODO but only update the date", async () => {
+    /* para crear un todo usando la instancia de prisma directamente para tener un registro ya que en el beforeEach todo es borrado */
+    const todo = await prisma.todoModel.create({ data: todo1 });
+
+    const { body } = await request(testServer.app)
+      .put(`/api/todos/${todo.id}`)
+      .send({ createdAt: "2023-10-21" })
+      .expect(200);
+
+    expect(body).toEqual({
+      id: expect.any(Number),
+      text: todo1.text,
+      createdAt: "2023-10-21T00:00:00.000Z",
+    });
   });
 });
