@@ -1,0 +1,82 @@
+{
+	"info": {
+		"_postman_id": "528c49b1-353c-4048-95d3-34a9b7f3d1f9",
+		"name": "Project - TODO App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "25203359"
+	},
+	"item": [
+		{
+			"name": "TODO - Create a Todo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Todo created\",\r\n    \"propertie\": \"Propertie\",\r\n    \"propertie2\": \"Propertie 2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3000/api/todos/createTodo"
+			},
+			"response": []
+		},
+		{
+			"name": "TODO - Get all Todos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3000/api/todos"
+			},
+			"response": []
+		},
+		{
+			"name": "TODO - Get Todo by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:3000/api/todos/1"
+			},
+			"response": []
+		},
+		{
+			"name": "TODO - Update Todo",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Todo updated\",\r\n    \"createdAt\": \"null\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3000/api/todos/1"
+			},
+			"response": []
+		},
+		{
+			"name": "TODO - Delete Todo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"text\": \"Todo updated\",\r\n    \"createdAt\": \"null\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:3000/api/todos/1"
+			},
+			"response": []
+		}
+	]
+}
